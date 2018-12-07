@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 #include <tuple>
 namespace intent
 {
@@ -18,7 +19,7 @@ namespace intent
   }
 
 
-  template<size_t dimcount, typename T>
+  template<size_t dimcount = 2, typename T = int>
   class Grid
   {
 
@@ -29,6 +30,13 @@ namespace intent
       {
         _corners=bbox(minX,minY,maxX,maxY);
       };
+
+    /* Todo get a stream as parameter */
+    void printDebugInfo()
+    {
+      std::cout << "Dimension: " << dimcount << std::endl;
+      std::cout << "Type (warning, implementation-defined, might make no sense!): " << typeid(T).name() << std::endl;
+    }
   private:
     bbox _corners;
     utility::multidimensional_vector<dimcount,T> v;

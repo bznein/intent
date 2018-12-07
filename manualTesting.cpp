@@ -5,5 +5,7 @@ using namespace std;
 
 int main()
 {
-  intent::Grid<3,string> g(0,0,5,5);
+  intent::Grid g(0,0,5,5);
+  g.printDebugInfo();
 }
+
