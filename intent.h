@@ -6,6 +6,16 @@ namespace intent
 {
   namespace utility
   {
+    template <size_t I,typename T> 
+      struct tuple_n{
+        template< typename...Args> using type = typename tuple_n<I-1, T>::template type<T, Args...>;
+      };
+
+    template <typename T> 
+      struct tuple_n<0, T> {
+      template<typename...Args> using type = std::tuple<Args...>;
+    };
+    template <size_t I,typename T>  using tuple_of = typename tuple_n<I,T>::template type<>;
 
     class default_t
     {
@@ -29,7 +39,7 @@ namespace intent
       };
 
     template <size_t dim, typename T, typename V>
-    void defInit(int size, T val, std::vector<T>& v)
+      void defInit(int size, T val, std::vector<T>& v)
     {
       v=std::vector<T>(size,val);
     }
@@ -37,7 +47,7 @@ namespace intent
     template <size_t dim, typename T, typename V>
       void defInit(int size, T val, V& v)
     {
-       v=std::vector<typename intent::utility::multidimensional_vector<(dim - 1), T>::type>(size);
+      v=std::vector<typename intent::utility::multidimensional_vector<(dim - 1), T>::type>(size);
        for (int i=0; i< size; ++i)
          defInit<dim-1,T,decltype(v[i])>(size,val,v[i]);
     }
@@ -52,22 +62,15 @@ namespace intent
   class Grid
   {
 
-
-    using bbox = std::tuple<int,int,int,int>;
+    /* TODO: initialization of v */
+    /* TODO parameter for the constructor */
   public:
-
     Grid()
     {
-      _corners=bbox(0,0,std::numeric_limits<int>::max(),std::numeric_limits<int>::max());
     }
     Grid(const utility::default_t &t)
     {
-      _corners=bbox(0,0,std::numeric_limits<int>::max(),std::numeric_limits<int>::max());
     }
-    Grid(int minX, int minY, int maxX, int maxY)
-      {
-        _corners=bbox(minX,minY,maxX,maxY);
-      };
 
     /* Todo get a stream as parameter */
     void printDebugInfo()
@@ -76,7 +79,7 @@ namespace intent
       std::cout << "Type (warning, implementation-defined, might make no sense!): " << typeid(T).name() << std::endl;
     }
   private:
-    bbox _corners;
-    utility::multidimensional_vector<dimcount,T> v;
+  utility::tuple_of<dimcount,int> _corners;
+  typename intent::utility::multidimensional_vector<dimcount,T>::type v;
   };
-};
+}
